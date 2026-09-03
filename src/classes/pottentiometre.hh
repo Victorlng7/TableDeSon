@@ -3,15 +3,11 @@
 
 class Potentiometre : public Composant
 {
-private:
+protected:
     int pin;
 
 public:
     Potentiometre(int broche);
-    int Fonction()
-    {
-        int valeurPotar = analogRead(12);
 
-        // Mettre la valeur de valeurPotar dans x volume (mélangeur volume)
-    };
+    int Fonction(this->pin);
 };

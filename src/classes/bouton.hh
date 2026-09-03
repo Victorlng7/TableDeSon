@@ -9,5 +9,5 @@ protected:
 public:
     Bouton(int broche);
 
-    int Fonction();
+    int Fonction(this->pin);
 };
