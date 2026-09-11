@@ -4,10 +4,13 @@
 class Potentiometre : public Composant
 {
 protected:
-    int pin;
+    String pin;
 
 public:
-    Potentiometre(int broche);
+    Potentiometre(String broche)
+        : Composant(0, 1), pin(broche)
+    {
+    }
 
-    int Fonction(this->pin);
+    int Fonction() override;
 };

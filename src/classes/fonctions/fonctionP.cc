@@ -1,6 +1,8 @@
-int Fonction(int pin)
-    {
-        int valeurPotar = analogRead(12);
+#include <>
 
-        // Mettre la valeur de valeurPotar dans x volume (mélangeur volume)
-    };
+int Fonction(int pin)
+{
+    int valeurPotar = analogRead(pin);
+
+    // Mettre la valeur de valeurPotar dans x volume (mélangeur volume)
+};
