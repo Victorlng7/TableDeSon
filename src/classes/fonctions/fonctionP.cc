@@ -1,6 +1,11 @@
-static int Fonction(int pin)
-{
-    int valeurPotar = analogRead(pin);
+#include <Arduino.h>
+#include "../pottentiometre.hh"
 
-    // Mettre la valeur de valeurPotar dans x volume (mélangeur volume)
+int Potentiometre::Fonction()
+{
+    int valeurPotar = analogRead(this->pin);
+
+    Serial.println(valeurPotar);
+
+    delay(500);
 };

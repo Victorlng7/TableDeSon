@@ -6,6 +6,8 @@
 
 void setup()
 {
+    Serial.begin(9600);
+
     Bouton boutonEnceinte("2");
     Bouton boutonCasque("3");
     Bouton boutonPreviousTrack("4");
