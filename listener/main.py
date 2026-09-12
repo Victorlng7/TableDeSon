@@ -1,10 +1,8 @@
 import serial
 import time
 
-from arduino.app_utlis import App
-
 # Configuration
-PORT = '/dev/ttyUSB0' # A changer selon le port arduino
+PORT = 'COM4' # A changer selon le port arduino
 BAUD_RATE = 9600
 
 # Action Bouton
@@ -26,7 +24,7 @@ def set_enceinte ():
 
 #Convertir en pourcentage
 def convertir_pourcentage(valeur):
-    return (int (int (valeur)/1023) * 100)
+    return int(valeur) * 100 // 1023
 
 
 #Fader
@@ -53,34 +51,36 @@ def set_app4_volume(app_name, valeur_brute):
 # Routage
 def traiter_message(message):
     try:
-        composant, valeur = message.split(":")
+        composant, valeur = message.split("/", 1)
+
+        print(composant, valeur)
         
         # Routage des Boutons
-        if composant == "BTN1" and valeur == "1":
+        if composant == "0" and valeur == "1":
             play_pause()
-        elif composant == "BTN2" and valeur == "1":
+        elif composant == "1" and valeur == "1":
             next_track()
-        elif composant == "BTN3" and valeur == "1":
+        elif composant == "2" and valeur == "1":
             previous_track()
-        elif composant == "BTN4" and valeur == "1":
+        elif composant == "3" and valeur == "1":
             set_casque()
-        elif composant == "BTN5" and valeur == "1":
+        elif composant == "4" and valeur == "1":
             set_enceinte()
             
         # Routage des Faders
-        elif composant == "FADER1":
+        elif composant == "5":
             set_master_volume(valeur)
-        elif composant == "FADER2":
+        elif composant == "6":
             set_app1_volume("Discord", valeur)
-        elif composant == "FADER3":
+        elif composant == "7":
             set_app2_volume("Chrome", valeur)
-        elif composant == "FADER4":
+        elif composant == "8":
             set_app3_volume("CS", valeur)
-        elif composant == "FADER5":
+        elif composant == "9":
             set_app4_volume("RL", valeur)
             
     except ValueError:
-        pass
+        print(f"Message invalide : {message}")
 
 # Boucle principale
 def main():
@@ -91,16 +91,17 @@ def main():
             while True:
                 if arduino.in_waiting > 0:
                     # Encodage UTF-8 du l'input arduino
-                    ligne = arduino.readline().decode('utf-8').strip()
+                    ligne = arduino.readline().decode('utf-8', errors='ignore').strip()
                     if ligne:
-                        traiter_message(ligne)
+                        print(ligne)
+                        # traiter_message(ligne)
                         
                 # Pause pour pas surcharger le CPU
                 time.sleep(0.1) 
     
     # Message d'erreur
-    except serial.SerialException:
-        print(f"Erreur : Impossible de se connecter au port {PORT}.")
+    except serial.SerialException as erreur:
+        print(f"Erreur : Impossible de se connecter au port {PORT} : {erreur}")
 
 if __name__ == "__main__":
     main()

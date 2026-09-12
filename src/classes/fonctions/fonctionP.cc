@@ -5,7 +5,7 @@ int Potentiometre::Fonction()
 {
     int valeurPotar = analogRead(this->pin);
 
-    Serial.println(valeurPotar);
+    return valeurPotar;
 
     delay(500);
 };
