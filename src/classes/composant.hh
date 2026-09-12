@@ -3,11 +3,11 @@
 class Composant
 {
 protected:
-    int idComp;
+    int id;
     int typeComp;
 
 public:
-    Composant(int idComp, int typeComp);
+    Composant(int idComp, int typeComp) : id(idComp), typeComp(typeComp) {}
 
     virtual int Fonction() = 0;
 

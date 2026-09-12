@@ -4,10 +4,14 @@
 class Bouton : public Composant
 {
 protected:
-    int pin;
+    String pin;
 
 public:
-    Bouton(int broche);
+    Bouton(String broche)
+        : Composant(0, 1), pin(broche)
+    {
+        pinMode(pin, INPUT);
+    }
 
     int Fonction(this->pin);
 };

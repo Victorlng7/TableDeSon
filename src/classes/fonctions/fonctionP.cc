@@ -1,6 +1,4 @@
-#include <>
-
-int Fonction(int pin)
+static int Fonction(int pin)
 {
     int valeurPotar = analogRead(pin);
 

@@ -1,27 +1,36 @@
-#include <Arduino.h>
 #include "classes/composant.hh"
 #include "classes/pottentiometre.hh"
+#include "classes/bouton.hh"
 
 // Adafruit_LiquidCrystal lcd(16x2);
 
 void setup()
 {
-    // bouton
-    pinMode(12, INPUT);
-    pinMode(12, INPUT);
-    pinMode(12, INPUT);
-    pinMode(12, INPUT);
-    pinMode(12, INPUT);
+    Bouton boutonEnceinte("2");
+    Bouton boutonCasque("3");
+    Bouton boutonPreviousTrack("4");
+    Bouton boutonPlayPause("5");
+    Bouton boutonNextTrack("6");
 
-    // pottards
-    pinMode(A0, INPUT);
-    pinMode(A1, INPUT);
-    pinMode(A2, INPUT);
-    pinMode(A3, INPUT);
-    pinMode(A4, INPUT);
+    Potentiometre master("A0");
+    Potentiometre app1("A1");
+    Potentiometre app2("A2");
+    Potentiometre app3("A3");
+    Potentiometre app4("A4");
+
+    Composant *composants[10] = {&boutonEnceinte, &boutonCasque, &boutonPreviousTrack, &boutonPlayPause, &boutonNextTrack, &master, &app1, &app2, &app3, &app4};
 }
 
-int main()
+int loop()
 {
-    Composant *P1 = Potentiometre("A0");
+    for (int i = 0; i < 2; i++)
+    {
+        int valeur = composants[i]->Fonction();
+
+        if (valeur > 0)
+        {
+        }
+    }
+
+    delay(50);
 }
