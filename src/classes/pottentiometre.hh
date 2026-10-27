@@ -11,7 +11,6 @@ public:
     Potentiometre(uint8_t broche)
         : Composant(0, 1), pin(broche)
     {
-        pinMode(pin, INPUT);
     }
 
     int Fonction() override;

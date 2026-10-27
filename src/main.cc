@@ -1,56 +1,51 @@
-#include "classes/composant.hh"
-#include "classes/pottentiometre.hh"
-#include "classes/bouton.hh"
+#include <Arduino.h>
 
-// creation des objet
-Bouton boutonEnceinte(3);
-Bouton boutonCasque(4);
-Bouton boutonPreviousTrack(5);
-Bouton boutonPlayPause(6);
-Bouton boutonNextTrack(7);
+const int boutons[] = {7, 8, 9, 10, 11};
+const int potentiometres[] = {A0, A1, A2, A3, A4};
 
-Potentiometre master(A0);
-Potentiometre app1(A1);
-Potentiometre app2(A2);
-Potentiometre app3(A3);
-Potentiometre app4(A4);
-
-// tableau d'objt
-Composant *composants[10] = {&boutonEnceinte, &boutonCasque, &boutonPreviousTrack, &boutonPlayPause, &boutonNextTrack, &master, &app1, &app2, &app3, &app4};
-
-// tableau de différence entre les input de valeurs
-int anciennesValeurs[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-// --------------------
+int anciennesValeursBoutons[] = {HIGH, HIGH, HIGH, HIGH, HIGH};
+int anciennesValeursPotars[] = {-1, -1, -1, -1, -1};
 
 void setup()
 {
     Serial.begin(9600);
 
-    // securité pullup
-    pinMode(3, INPUT_PULLUP);
-    pinMode(4, INPUT_PULLUP);
-    pinMode(5, INPUT_PULLUP);
-    pinMode(6, INPUT_PULLUP);
-    pinMode(7, INPUT_PULLUP);
+    for (int i = 0; i < 5; i++)
+    {
+        pinMode(boutons[i], INPUT_PULLUP);
+    }
 }
 
 void loop()
 {
-    for (int i = 0; i < 10; i++)
+    // Boutons
+    for (int i = 0; i < 5; i++)
     {
-        int valeur = composants[i]->Fonction();
+        int valeur = digitalRead(boutons[i]);
 
-        // calcule de l'écart avec l'ancienne valeur
-        int difference = abs(valeur - anciennesValeurs[i]);
-
-        // si diférence on serial.print
-        if ((i < 5 && difference > 0) || (i >= 5 && difference > 2))
+        if (valeur != anciennesValeursBoutons[i])
         {
+            Serial.print(boutons[i]);
+            Serial.print(" : ");
+            Serial.println(valeur == LOW ? "appuye" : "relache");
+
+            anciennesValeursBoutons[i] = valeur;
+        }
+    }
+
+    // Potentiometres
+    for (int i = 0; i < 5; i++)
+    {
+        int valeur = analogRead(potentiometres[i]);
+
+        if (abs(valeur - anciennesValeursPotars[i]) > 2)
+        {
+            Serial.print("A");
             Serial.print(i);
-            Serial.print("/");
+            Serial.print(" : ");
             Serial.println(valeur);
 
-            anciennesValeurs[i] = valeur;
+            anciennesValeursPotars[i] = valeur;
         }
     }
 
