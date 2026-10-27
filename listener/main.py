@@ -2,7 +2,7 @@ import serial
 import time
 
 # Configuration
-PORT = 'COM4' # A changer selon le port arduino
+PORT = 'COM5' # A changer selon le port arduino
 BAUD_RATE = 9600
 
 # Action Bouton
