@@ -1,58 +1,45 @@
-#include "classes/composant.hh"
-#include "classes/pottentiometre.hh"
-#include "classes/bouton.hh"
-
-// creation des objet
-Bouton boutonEnceinte(3);
-Bouton boutonCasque(4);
-Bouton boutonPreviousTrack(5);
-Bouton boutonPlayPause(6);
-Bouton boutonNextTrack(7);
-
-Potentiometre master(A0);
-Potentiometre app1(A1);
-Potentiometre app2(A2);
-Potentiometre app3(A3);
-Potentiometre app4(A4);
-
-// tableau d'objt
-Composant *composants[10] = {&boutonEnceinte, &boutonCasque, &boutonPreviousTrack, &boutonPlayPause, &boutonNextTrack, &master, &app1, &app2, &app3, &app4};
-
-// tableau de différence entre les input de valeurs
-int anciennesValeurs[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-// --------------------
+#include <Arduino.h>
 
 void setup()
 {
-    Serial.begin(9600);
-
-    // securité pullup
-    pinMode(3, INPUT_PULLUP);
-    pinMode(4, INPUT_PULLUP);
-    pinMode(5, INPUT_PULLUP);
-    pinMode(6, INPUT_PULLUP);
-    pinMode(7, INPUT_PULLUP);
+    Serial.begin(115200);
+    while (!Serial)
+        ;
 }
+
+// 1 seul fader
+
+// void loop()
+// {
+//     int valA0 = analogRead(A0);
+
+//     Serial.print("A0:");
+
+//     Serial.println(valA0);
+
+//     delay(100);
+// }
+
+// 5 faders
 
 void loop()
 {
-    for (int i = 0; i < 10; i++)
-    {
-        int valeur = composants[i]->Fonction();
+    int valA0 = analogRead(A0);
+    int valA1 = analogRead(A1);
+    int valA2 = analogRead(A2);
+    int valA3 = analogRead(A3);
+    int valA4 = analogRead(A4);
 
-        // calcule de l'écart avec l'ancienne valeur
-        int difference = abs(valeur - anciennesValeurs[i]);
+    Serial.print("A0:");
+    Serial.print(valA0);
+    Serial.print(" | A1:");
+    Serial.print(valA1);
+    Serial.print(" | A2:");
+    Serial.print(valA2);
+    Serial.print(" | A3:");
+    Serial.print(valA3);
+    Serial.print(" | A4:");
+    Serial.println(valA4);
 
-        // si diférence on serial.print
-        if ((i < 5 && difference > 0) || (i >= 5 && difference > 2))
-        {
-            Serial.print(i);
-            Serial.print("/");
-            Serial.println(valeur);
-
-            anciennesValeurs[i] = valeur;
-        }
-    }
-
-    delay(10);
+    delay(100);
 }
