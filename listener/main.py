@@ -1,65 +1,83 @@
+
 import serial
 import time
 
+from windows_audio import WindowsAudio
+
 # Configuration
-PORT = 'COM5' # A changer selon le port arduino
+PORT = 'COM5'
 BAUD_RATE = 9600
 
-# Action Bouton
+# Initialisation du mixeur Windows
+audio = WindowsAudio()
+
+
+# Actions boutons
 def play_pause():
     print("Action : Lecture / Pause de la musique")
 
-def next_track ():
+
+def next_track():
     print("Action : Prochaine piste")
 
-def previous_track ():
-    print("Action : piste précédente")
 
-def set_casque ():
-    print("Action : Définition de la sortie audio au casque")
-
-def set_enceinte ():
-    print("Action : Définition de la sortie audio aux enceintes")
+def previous_track():
+    print("Action : Piste précédente")
 
 
-#Convertir en pourcentage
+def set_casque():
+    audio.set_output("Casque")
+
+
+def set_enceinte():
+    audio.set_output("Haut-parleurs (High")
+
+
+# Convertir en pourcentage
 def convertir_pourcentage(valeur):
     valeur = int(valeur)
+
     if not 0 <= valeur <= 1023:
-        raise ValueError("La valeur du potentiomètre doit être entre 0 et 1023")
-    return valeur * 100 // 1023
+        raise ValueError("Valeur du potentiomètre invalide")
+
+    return 100 - (valeur * 100 // 1023)
+#pottards a l'envers donc changement de 0% -> 100%...
 
 
-#Fader
+# Faders
 def set_master_volume(valeur_brute):
-    pourcentage = convertir_pourcentage(valeur_brute) 
-    print(f"Volume Master réglé à : {pourcentage}%")
+    pourcentage = convertir_pourcentage(valeur_brute)
+    audio.set_master_volume(pourcentage)
 
-def set_app1_volume(app_name, valeur_brute):
-    pourcentage = convertir_pourcentage(valeur_brute) 
-    print(f"Volume {app_name} réglé sur {pourcentage}")
 
-def set_app2_volume(app_name, valeur_brute):
-    pourcentage = convertir_pourcentage(valeur_brute) 
-    print(f"Volume {app_name} réglé sur {pourcentage}")
+def set_app1_volume(valeur_brute):
+    pourcentage = convertir_pourcentage(valeur_brute)
+    audio.set_app_volume("chrome.exe", pourcentage)
 
-def set_app3_volume(app_name, valeur_brute):
-    pourcentage = convertir_pourcentage(valeur_brute) 
-    print(f"Volume {app_name} réglé sur {pourcentage}")
 
-def set_app4_volume(app_name, valeur_brute):
-    pourcentage = convertir_pourcentage(valeur_brute) 
-    print(f"Volume {app_name} réglé sur {pourcentage}")
+def set_app2_volume(valeur_brute):
+    pourcentage = convertir_pourcentage(valeur_brute)
+    audio.set_app_volume("Discord.exe", pourcentage)
+
+
+def set_app3_volume(valeur_brute):
+    pourcentage = convertir_pourcentage(valeur_brute)
+    audio.set_app_volume("cs2.exe", pourcentage)
+
+
+def set_app4_volume(valeur_brute):
+    pourcentage = convertir_pourcentage(valeur_brute)
+    audio.set_app_volume("RocketLeague.exe", pourcentage)
+
 
 # Routage
-
 def traiter_message(message):
     try:
         composant, valeur = message.split(":", 1)
         composant = composant.strip()
         valeur = valeur.strip()
 
-        # Boutons : format "3 : appuye" ou "3 : relache"
+        # Boutons
         if composant.isdigit():
             bouton = int(composant)
 
@@ -75,45 +93,55 @@ def traiter_message(message):
                 elif bouton == 7:
                     next_track()
 
-        # Potentiomètres : format "A0 : 512"
+        # Potentiomètres
         elif composant in ("A0", "A1", "A2", "A3", "A4"):
             valeur = int(valeur)
 
-            if composant == "A1":
-                set_app1_volume("Discord", valeur)
-            elif composant == "A2":
-                set_app2_volume("Chrome", valeur)
-            elif composant == "A3":
-                set_app3_volume("CS", valeur)
-            elif composant == "A4":
-                set_app4_volume("RL", valeur)
-            elif composant == "A0":
+            if composant == "A0":
                 set_master_volume(valeur)
+            elif composant == "A1":
+                set_app1_volume(valeur)
+            elif composant == "A2":
+                set_app2_volume(valeur)
+            elif composant == "A3":
+                set_app3_volume(valeur)
+            elif composant == "A4":
+                set_app4_volume(valeur)
 
         else:
             print(f"Message inconnu : {message}")
 
-    except (ValueError, TypeError):
-        print(f"Message invalide : {message}")
+    except (ValueError, TypeError) as erreur:
+        print(f"Message invalide : {message} ({erreur})")
+
 
 # Boucle principale
 def main():
-    print(f"Lancement de l'écoute de la carte arduino (port :{PORT})...")
+    print(f"Lancement de l'écoute Arduino (port : {PORT})...")
+
     try:
-        # Connexion
         with serial.Serial(PORT, BAUD_RATE, timeout=None) as arduino:
-            # L'ouverture du port redémarre souvent l'Arduino; attendre son démarrage.
+
             time.sleep(2)
             arduino.reset_input_buffer()
+
+            print("Arduino connecté !")
+            print("Sorties audio disponibles :")
+
+            for sortie in audio.get_outputs():
+                print(f"- {sortie}")
+
             while True:
-                ligne = arduino.readline().decode("utf-8", errors="ignore").strip()
+                ligne = arduino.readline().decode(
+                    "utf-8", errors="ignore"
+                ).strip()
 
                 if ligne:
-                    traiter_message(ligne)                
-    
-    # Message d'erreur
+                    traiter_message(ligne)
+
     except serial.SerialException as erreur:
-        print(f"Erreur : Impossible de se connecter au port {PORT} : {erreur}")
+        print(f"Erreur de connexion Arduino : {erreur}")
+
 
 if __name__ == "__main__":
     main()
