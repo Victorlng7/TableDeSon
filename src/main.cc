@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-const int boutons[] = {7, 8, 9, 10, 11};
+const int boutons[] = {3, 4, 5, 6, 7};
 const int potentiometres[] = {A0, A1, A2, A3, A4};
 
 int anciennesValeursBoutons[] = {HIGH, HIGH, HIGH, HIGH, HIGH};

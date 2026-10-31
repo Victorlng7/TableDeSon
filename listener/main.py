@@ -87,9 +87,8 @@ def traiter_message(message):
                 set_app3_volume("CS", valeur)
             elif composant == "A4":
                 set_app4_volume("RL", valeur)
-            # elif composant == "A0":
-            #     set_master_volume(valeur)
-            # commentaire car buggé
+            elif composant == "A0":
+                set_master_volume(valeur)
 
         else:
             print(f"Message inconnu : {message}")
